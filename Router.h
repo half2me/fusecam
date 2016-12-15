@@ -1,11 +1,17 @@
 #ifndef FUSECAM_ROUTER_H
 #define FUSECAM_ROUTER_H
+
+#include <vector>
 #include "fuse.h"
+#include "Camera.h"
 
 class Router {
+private:
+    static void splitRoute(const char* path, std::vector<std::string> &vec);
 public:
-    static void setup();
+    static Camera *cam;
     static struct fuse_operations ops;
+    static void setup();
     static void* init(struct fuse_conn_info *conn);
     static void destroy(void* private_data);
     static int getattr(const char* path, struct stat *statbuf);
