@@ -8,10 +8,9 @@
 #include "Io.h"
 
 class Camera {
-private:
+public:
     std::map<std::string, Stream*> streams;
     std::map<std::string, Io*> io;
-public:
     Camera();
     Stream* getStream(const std::string& name);
     void setStream(const std::string& name, Stream& stream);
