@@ -12,7 +12,7 @@ private:
     static std::set<std::string> dirs;
     static std::set<std::string> files;
 public:
-    static Camera *cam;
+    static Camera* cam;
     static struct fuse_operations ops;
     static void setup();
     static void* init(struct fuse_conn_info *conn);

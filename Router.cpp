@@ -7,7 +7,7 @@
 #include "Camera.h"
 
 fuse_operations Router::ops = {0};
-Camera *Router::cam;
+Camera* Router::cam;
 std::set<std::string> Router::dirs;
 std::set<std::string> Router::files;
 
@@ -25,7 +25,7 @@ void Router::setup() {
     ops.open = open;
     ops.read = read;
     ops.write = write;
-    ops.lock = lock;
+    //ops.lock = lock;
 
     dirs.insert("streams");
     dirs.insert("io");
@@ -33,7 +33,7 @@ void Router::setup() {
     files.insert("system_info");
 }
 
-void *Router::init(struct fuse_conn_info *conn) {
+void* Router::init(struct fuse_conn_info *conn) {
     std::cout << "FuseCam - FUSE version: " << conn->proto_major << "." << conn->proto_major << std::endl;
     cam = new Camera();
     return nullptr;
@@ -184,38 +184,59 @@ void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
 }
 
 int Router::mkdir(const char *path, mode_t mode) {
+    std::cout << "mkdir " << path << std::endl;
     return -1;
 }
 
 int Router::rmdir(const char *path) {
+    std::cout << "rmdir " << path << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+
+    if (split.size() == 3) {
+        if (split[1] == "streams") {
+            cam->removeStream(split[2]);
+            return 0;
+        } else if (split[1] == "io") {
+            cam->removeIo(split[2]);
+            return 0;
+        }
+    }
     return -1;
 }
 
 int Router::unlink(const char *path) {
+    std::cout << "unlink " << path << std::endl;
     return -1;
 }
 
 int Router::rename(const char *path, const char *newpath) {
+    std::cout << "rename " << path << std::endl;
     return -1;
 }
 
 int Router::truncate(const char *path, off_t size) {
+    std::cout << "truncate " << path << std::endl;
     return -1;
 }
 
 int Router::open(const char *path, struct fuse_file_info *fi) {
-    return -1;
+    std::cout << "open " << path << std::endl;
+    return 0;
 }
 
 int Router::read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
+    std::cout << "read " << path << std::endl;
     return -1;
 }
 
 int Router::write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
+    std::cout << "write " << path << std::endl;
     return -1;
 }
 
 int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct flock *locks) {
+    std::cout << "lock " << path << std::endl;
     return -1;
 }
 
