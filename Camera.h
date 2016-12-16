@@ -9,11 +9,16 @@
 
 class Camera {
 private:
-    std::map<std::string, Stream> streams;
-    std::vector<Io> io;
+    std::map<std::string, Stream*> streams;
+    std::map<std::string, Io*> io;
 public:
     Camera();
-    Stream& getStream(const std::string& stream);
+    Stream* getStream(const std::string& name);
+    void setStream(const std::string& name, Stream& stream);
+    void removeStream(const std::string &name);
+    Io* getIo(const std::string& name);
+    void setIo(const std::string& name, Io& io);
+    void removeIo(const std::string &name);
     virtual ~Camera();
 };
 
