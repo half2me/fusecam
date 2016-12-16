@@ -92,7 +92,30 @@ int Router::getattr(const char *path, struct stat *st) {
 
 int Router::opendir(const char *path, struct fuse_file_info *fi) {
     std::cout << "opendir " << path << std::endl;
-    return 0;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+
+    if (strcmp(path, "/") == 0) {
+        return 0;
+    } else if (split.size() == 2) {
+        if (dirs.find(split[1]) != dirs.end()) {
+            return 0;
+        }
+    } else if (split.size() == 3) {
+        if (split[1] == "streams") {
+            Stream* stream = cam->getStream(split[2]);
+            if (stream != nullptr) {
+                return 0;
+            }
+        } else if (split[1] == "io") {
+            Io* io = cam->getIo(split[2]);
+            if (io != nullptr) {
+                return 0;
+            }
+        }
+    }
+
+    return -1;
 }
 
 int Router::readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
