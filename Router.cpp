@@ -17,6 +17,15 @@ void Router::setup() {
     ops.opendir = opendir;
     ops.readdir = readdir;
     ops.getattr = getattr;
+    ops.mkdir = mkdir;
+    ops.rmdir = rmdir;
+    ops.unlink = unlink;
+    ops.rename = rename;
+    ops.truncate = truncate;
+    ops.open = open;
+    ops.read = read;
+    ops.write = write;
+    ops.lock = lock;
 
     dirs.insert("streams");
     dirs.insert("io");
@@ -173,3 +182,41 @@ void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
         vec.push_back(segment);
     }
 }
+
+int Router::mkdir(const char *path, mode_t mode) {
+    return -1;
+}
+
+int Router::rmdir(const char *path) {
+    return -1;
+}
+
+int Router::unlink(const char *path) {
+    return -1;
+}
+
+int Router::rename(const char *path, const char *newpath) {
+    return -1;
+}
+
+int Router::truncate(const char *path, off_t size) {
+    return -1;
+}
+
+int Router::open(const char *path, struct fuse_file_info *fi) {
+    return -1;
+}
+
+int Router::read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
+    return -1;
+}
+
+int Router::write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
+    return -1;
+}
+
+int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct flock *locks) {
+    return -1;
+}
+
+
