@@ -2,10 +2,10 @@
 
 Camera::Camera() {
     // debug generate streams and io
-    setStream("str1", *new Stream());
-    setStream("str2", *new Stream());
-    setIo("io1", *new Io());
-    setIo("io2", *new Io());
+    //setStream("str1", *new Stream());
+    //setStream("str2", *new Stream());
+    //setIo("io1", *new Io());
+    //setIo("io2", *new Io());
 }
 
 Camera::~Camera() {
