@@ -22,10 +22,6 @@ matrix:
         - brew update
         - brew cask install osxfuse
 
-compiler:
-  - clang
-  - gcc
-
 before_script:
   - mkdir build
   - cd build
