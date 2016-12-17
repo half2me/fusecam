@@ -5,15 +5,10 @@ matrix:
   include:
     - os: linux
       dist: trusty
-      compiler:
-        - clang
-        - gcc
+      compiler: clang
       addons:
         apt:
           packages:
-          - cmake
-          - clang
-          - llvm
           - libfuse-dev
           - libfuse2
     - os: osx
