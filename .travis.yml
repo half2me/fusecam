@@ -5,6 +5,7 @@ matrix:
   include:
     - os: linux
       dist: trusty
+      compiler: clang
       addons:
         apt:
           packages:
@@ -15,10 +16,6 @@ matrix:
       before_install:
         - brew update
         - brew cask install osxfuse
-
-compiler:
-  - clang
-  - gcc
 
 before_script:
   - mkdir build
