@@ -1,20 +1,25 @@
-sudo: required
-dist: xenial
-
-addons:
-  apt:
-    packages:
-    # install toolchains
-    - cmake
-    - gcc
-    - g++
-    - clang
-    - llvm
-    # install dependencies
-    - libfuse-dev
-    - libfuse2
-
 language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      sudo: required
+      addons:
+        apt:
+          packages:
+          - cmake
+          - gcc
+          - g++
+          - clang
+          - llvm
+          - libfuse-dev
+          - libfuse2
+    - os: osx
+      osx_image: xcode8.2
+      before_install:
+        - brew update
+        - brew install osxfuse
 
 compiler:
   - clang
@@ -26,7 +31,6 @@ before_script:
   - cmake ..
 
 script: make
-
 
 notifications:
   email: false
