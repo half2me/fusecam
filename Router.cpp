@@ -33,13 +33,21 @@ void Router::setup() {
     files.insert("system_info");
 }
 
+void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
+    std::stringstream p(path);
+    std::string segment;
+    while (std::getline(p, segment, '/')) {
+        vec.push_back(segment);
+    }
+}
+
 void* Router::init(struct fuse_conn_info *conn) {
     std::cout << "FuseCam - FUSE version: " << conn->proto_major << "." << conn->proto_major << std::endl;
     cam = new Camera();
     return nullptr;
 }
 
-void Router::destroy(void *private_data) {
+void Router::destroy(void* private_data) {
     std::cout << "FuseCam shutting down...";
     delete cam;
 }
@@ -173,14 +181,6 @@ int Router::readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t o
     }
 
     return 0;
-}
-
-void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
-    std::stringstream p(path);
-    std::string segment;
-    while (std::getline(p, segment, '/')) {
-        vec.push_back(segment);
-    }
 }
 
 int Router::mkdir(const char *path, mode_t mode) {
