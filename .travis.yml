@@ -23,7 +23,7 @@ matrix:
       compiler: clang
       before_install:
         - brew update
-        - brew install osxfuse
+        - brew cask install osxfuse
 
 compiler:
   - clang
