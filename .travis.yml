@@ -9,7 +9,7 @@ addons:
     - g++
     - clang
     - llvm
-    # install deps
+    # install dependencies
     - libfuse-dev
     - libfuse2
 
