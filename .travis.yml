@@ -1,3 +1,18 @@
+sudo: required
+dist: xenial
+
+addons:
+  apt:
+    packages:
+    # install toolchains
+    - gcc
+    - g++
+    - clang
+    - llvm
+    # install deps
+    - libfuse-dev
+    - libfuse2
+
 language: cpp
 
 compiler:
@@ -13,5 +28,4 @@ script: make
 
 
 notifications:
-  email: false
   email: false
