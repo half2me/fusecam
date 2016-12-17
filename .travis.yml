@@ -10,8 +10,6 @@ matrix:
         apt:
           packages:
           - cmake
-          - gcc
-          - g++
           - clang
           - llvm
           - libfuse-dev
