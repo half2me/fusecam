@@ -5,6 +5,7 @@ addons:
   apt:
     packages:
     # install toolchains
+    - cmake
     - gcc
     - g++
     - clang
