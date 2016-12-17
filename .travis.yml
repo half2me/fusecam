@@ -1,10 +1,11 @@
-language: cpp
-
 matrix:
   include:
     - os: linux
       dist: xenial
       sudo: required
+      compiler:
+        - clang
+        - gcc
       addons:
         apt:
           packages:
@@ -17,6 +18,7 @@ matrix:
           - libfuse2
     - os: osx
       osx_image: xcode8.2
+      compiler: clang
       before_install:
         - brew update
         - brew install osxfuse
