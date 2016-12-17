@@ -6,7 +6,7 @@ cache: ccache
 matrix:
   include:
     - os: linux
-      dist: trusty
+      dist: xenial
       compiler: clang
       addons:
         apt:
