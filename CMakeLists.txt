@@ -15,3 +15,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
 
 add_definitions (-D_FILE_OFFSET_BITS=64 -DFUSE_USE_VERSION=30)
 add_executable(FuseCam ${SOURCE_FILES})
+
+# Target Dummy
+set(DUMMY_SOURCE_FILES ${SOURCE_FILES} vendor/Dummy/DummyCamera.h vendor/Dummy/DummyCamera.cpp)
+add_executable(Dummy ${DUMMY_SOURCE_FILES})
