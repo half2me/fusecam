@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstring>
+#include <string>
 #include <zconf.h>
 #include <sstream>
 #include <set>
