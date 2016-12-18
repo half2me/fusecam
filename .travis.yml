@@ -5,8 +5,6 @@ cache: ccache
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - osx
   include:
     - os: linux
       dist: trusty
@@ -21,6 +19,7 @@ matrix:
             - libfuse-dev
             - libfuse2
     - os: osx
+      allow_failures: true
       osx_image: xcode8.2
       compiler: clang
       before_install:
