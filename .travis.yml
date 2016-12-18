@@ -19,7 +19,6 @@ matrix:
             - libfuse-dev
             - libfuse2
     - os: osx
-      allow_failures: true
       osx_image: xcode8.2
       compiler: clang
       before_install:
