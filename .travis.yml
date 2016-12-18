@@ -1,31 +1,29 @@
+language: cpp
+sudo: false
+
+cache: ccache
+
 matrix:
+  fast_finish: true
   include:
     - os: linux
-      dist: xenial
-      sudo: required
-      compiler:
-        - clang
-        - gcc
+      dist: trusty
+      compiler: clang-3.8
       addons:
         apt:
+          sources:
+            - llvm-toolchain-precise-3.8
           packages:
-          - cmake
-          - gcc
-          - g++
-          - clang
-          - llvm
-          - libfuse-dev
-          - libfuse2
+            - clang-3.8
+            - llvm-3.8
+            - libfuse-dev
+            - libfuse2
     - os: osx
       osx_image: xcode8.2
       compiler: clang
       before_install:
         - brew update
-        - brew install osxfuse
-
-compiler:
-  - clang
-  - gcc
+        - brew cask install osxfuse
 
 before_script:
   - mkdir build

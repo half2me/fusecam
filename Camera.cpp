@@ -1,3 +1,4 @@
+#include <string>
 #include "Camera.h"
 
 Camera::Camera() {
@@ -10,12 +11,12 @@ Camera::Camera() {
 
 Camera::~Camera() {
     // Cleanup Streams
-    for (std::pair<const std::string, Stream *> & s: streams) {
+    for (auto& s: streams) {
         delete s.second;
     }
 
     // Cleanup Io
-    for (std::pair<const std::string, Io *> & i: io) {
+    for (auto& i: io) {
         delete i.second;
     }
 }
