@@ -8,6 +8,8 @@
 
 #ifdef VENDOR_DUMMY
 #include "vendor/Dummy/DummyCamera.h"
+#include "SmartBuffer.h"
+
 #endif
 
 fuse_operations Router::ops = {0};
@@ -228,8 +230,8 @@ int Router::open(const char *path, struct fuse_file_info *fi) {
             auto stream = cam->getStream(split[2]);
             if (stream != nullptr) {
                 if (split[3] == "screenshot") {
-                    fi->fh = (uintptr_t) new char [stream->screenShotBufferSize];
-                    stream->getScreenShot((char *) fi->fh);
+                    fi->fh = (uintptr_t) new SmartBuffer(stream->screenShotBufferSize);
+                    stream->getScreenShot(((SmartBuffer*)(fi->fh))->buf);
                 }
             }
         }
@@ -246,7 +248,7 @@ int Router::release(const char *path, struct fuse_file_info *fi) {
             auto stream = cam->getStream(split[2]);
             if (stream != nullptr) {
                 if (split[3] == "screenshot") {
-                    delete (char*) fi->fh;
+                    delete (SmartBuffer*) (fi->fh);
                 }
             }
         }
@@ -258,17 +260,8 @@ int Router::read(const char *path, char *buf, size_t size, off_t offset, struct 
     std::cout << "read " << path << " Size: " << size << " Offset: " << offset << std::endl;
     std::vector<std::string> split;
     splitRoute(path, split);
-    if (split.size() == 2) {
-        if (split[1] == "system_info") {
-            return readToBuf(cam->getSystemInfo().c_str(), sizeof(cam->getSystemInfo().c_str()), buf, size, offset);
-        }
-    } else if (split.size() > 3) {
-        if (split[1] == "streams") {
-            auto stream = cam->getStream(split[2]);
-            if (stream != nullptr && fi->fh != (uintptr_t) nullptr) {
-                readToBuf((char *) fi->fh, (size_t) stream->screenShotBufferSize, buf, size, offset);
-            }
-        }
+    if (fi->fh != (intptr_t) nullptr) {
+        return ((SmartBuffer*)(fi->fh))->read((const unsigned int) offset, (const unsigned int) size, buf);
     }
     return -1;
 }
@@ -282,19 +275,3 @@ int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct fl
     std::cout << "lock " << path << std::endl;
     return -1;
 }
-
-int Router::readToBuf(const char* src, size_t srcSize, char* dst, size_t len, off_t offset) {
-    if ((size_t)offset >= srcSize) {
-        return 0;
-    }
-
-    if (offset + len > srcSize) {
-        memcpy(dst, src + offset, (srcSize - offset));
-        return (int) (srcSize - offset);
-    }
-
-    memcpy(dst, &src[offset], len);
-    return (int) len;
-}
-
-

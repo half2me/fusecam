@@ -1,11 +1,13 @@
 #ifndef FUSECAM_DUMMYCAMERA_H
 #define FUSECAM_DUMMYCAMERA_H
 
-
+#include <string>
 #include "../../Camera.h"
+#include "DummyStream.h"
 
 class DummyCamera : public Camera {
-
+public:
+    DummyCamera();
 };
 
 

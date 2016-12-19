@@ -15,7 +15,7 @@ set(SOURCE_FILES
         Router.cpp Router.h
         Camera.cpp Camera.h
         Stream.cpp Stream.h
-        Io.cpp Io.h)
+        Io.cpp Io.h SmartBuffer.cpp SmartBuffer.h)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
 add_definitions(-D_FILE_OFFSET_BITS=64 -DFUSE_USE_VERSION=30)
 

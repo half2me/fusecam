@@ -20,9 +20,9 @@ Stream* Camera::getStream(const std::string &name) {
     return streams[name];
 }
 
-void Camera::setStream(const std::string &name, Stream &stream) {
+void Camera::setStream(const std::string &name, Stream* stream) {
     removeStream(name); // make sure we remove any with the same name
-    streams[name] = &stream;
+    streams[name] = stream;
 }
 
 void Camera::removeStream(const std::string &name) {
@@ -37,9 +37,9 @@ Io* Camera::getIo(const std::string &name) {
     return io[name];
 }
 
-void Camera::setIo(const std::string &name, Io &io) {
+void Camera::setIo(const std::string &name, Io* io) {
     removeIo(name); // make sure we remove any with the same name
-    this->io[name] = &io;
+    this->io[name] = io;
 }
 
 void Camera::removeIo(const std::string &name) {

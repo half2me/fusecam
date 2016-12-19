@@ -5,7 +5,10 @@
 #include "../../Stream.h"
 
 class DummyStream : public Stream {
-
+public:
+    DummyStream();
+    ~DummyStream();
+    virtual int getScreenShot(char* buf);
 };
 
 
