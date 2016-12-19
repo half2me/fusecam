@@ -6,6 +6,12 @@
 #include "Router.h"
 #include "Camera.h"
 
+#ifdef VENDOR_DUMMY
+#include "vendor/Dummy/DummyCamera.h"
+#include "SmartBuffer.h"
+
+#endif
+
 fuse_operations Router::ops = {0};
 Camera* Router::cam;
 std::set<std::string> Router::dirs;
@@ -23,6 +29,7 @@ void Router::setup() {
     ops.rename = rename;
     ops.truncate = truncate;
     ops.open = open;
+    ops.release = release;
     ops.read = read;
     ops.write = write;
     //ops.lock = lock;
@@ -31,6 +38,10 @@ void Router::setup() {
     dirs.insert("io");
 
     files.insert("system_info");
+
+#ifdef VENDOR_DUMMY
+    cam = new DummyCamera();
+#endif
 }
 
 void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
@@ -43,7 +54,6 @@ void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
 
 void* Router::init(struct fuse_conn_info *conn) {
     std::cout << "FuseCam - FUSE version: " << conn->proto_major << "." << conn->proto_major << std::endl;
-    cam = new Camera();
     return nullptr;
 }
 
@@ -85,6 +95,15 @@ int Router::getattr(const char *path, struct stat *st) {
                 exists = true;
             }
         }
+    } else if (split.size() > 3) {
+        if (split[1] == "streams") {
+            Stream* stream = cam->getStream(split[2]);
+            if (stream != nullptr) {
+                if (split[3] == "screenshot") {
+                    exists = true;
+                }
+            }
+        }
     }
 
     if (exists) {
@@ -99,6 +118,7 @@ int Router::getattr(const char *path, struct stat *st) {
             // file
             st->st_mode = S_IFREG | 0644;
             st->st_nlink = 1;
+            st->st_size = 4096;
         }
     } else {
         return -1;
@@ -112,27 +132,7 @@ int Router::opendir(const char *path, struct fuse_file_info *fi) {
     std::vector<std::string> split;
     splitRoute(path, split);
 
-    if (strcmp(path, "/") == 0) {
-        return 0;
-    } else if (split.size() == 2) {
-        if (dirs.find(split[1]) != dirs.end()) {
-            return 0;
-        }
-    } else if (split.size() == 3) {
-        if (split[1] == "streams") {
-            Stream* stream = cam->getStream(split[2]);
-            if (stream != nullptr) {
-                return 0;
-            }
-        } else if (split[1] == "io") {
-            Io* io = cam->getIo(split[2]);
-            if (io != nullptr) {
-                return 0;
-            }
-        }
-    }
-
-    return -1;
+    return 0;
 }
 
 int Router::readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
@@ -166,6 +166,7 @@ int Router::readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t o
             Stream* stream = cam->getStream(split[2]);
             if (stream != nullptr) {
                 exists = true;
+                filler(buf, "screenshot", NULL, 0);
             }
         } else if (split[1] == "io") {
             Io* io = cam->getIo(split[2]);
@@ -222,11 +223,46 @@ int Router::truncate(const char *path, off_t size) {
 
 int Router::open(const char *path, struct fuse_file_info *fi) {
     std::cout << "open " << path << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+    if (split.size() > 3) {
+        if (split[1] == "streams") {
+            auto stream = cam->getStream(split[2]);
+            if (stream != nullptr) {
+                if (split[3] == "screenshot") {
+                    fi->fh = (uintptr_t) new SmartBuffer(stream->screenShotBufferSize);
+                    stream->getScreenShot(((SmartBuffer*)(fi->fh))->buf);
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int Router::release(const char *path, struct fuse_file_info *fi) {
+    std::cout << "open " << path << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+    if (split.size() > 3) {
+        if (split[1] == "streams") {
+            auto stream = cam->getStream(split[2]);
+            if (stream != nullptr) {
+                if (split[3] == "screenshot") {
+                    delete (SmartBuffer*) (fi->fh);
+                }
+            }
+        }
+    }
     return 0;
 }
 
 int Router::read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
-    std::cout << "read " << path << std::endl;
+    std::cout << "read " << path << " Size: " << size << " Offset: " << offset << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+    if (fi->fh != (intptr_t) nullptr) {
+        return ((SmartBuffer*)(fi->fh))->read((const unsigned int) offset, (const unsigned int) size, buf);
+    }
     return -1;
 }
 
@@ -239,5 +275,3 @@ int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct fl
     std::cout << "lock " << path << std::endl;
     return -1;
 }
-
-

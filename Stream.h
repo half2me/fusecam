@@ -3,7 +3,11 @@
 
 
 class Stream {
-
+public:
+    Stream();
+    virtual ~Stream();
+    int screenShotBufferSize;
+    virtual int getScreenShot(char* buf) = 0;
 };
 
 
