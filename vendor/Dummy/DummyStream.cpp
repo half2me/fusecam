@@ -10,6 +10,7 @@ DummyStream::~DummyStream() {
 }
 
 int DummyStream::getScreenShot(char *buf) {
-    memcpy(buf, "Hello World", 12);
-    return 12;
+    const char* s = "Hello World";
+    strcpy(buf, s);
+    return sizeof(s);
 }
