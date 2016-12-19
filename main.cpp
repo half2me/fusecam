@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include <fuse.h>
 #include "Router.h"
 

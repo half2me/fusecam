@@ -26,6 +26,7 @@ public:
     static int rename(const char *path, const char *newpath);
     static int truncate(const char* path, off_t size);
     static int open(const char* path, struct fuse_file_info* fi);
+    static int release(const char *path, struct fuse_file_info *fi);
     static int read(const char* path, char *buf, size_t size, off_t offset, struct fuse_file_info* fi);
     static int write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
     static int lock(const char* path, struct fuse_file_info* fi, int cmd, struct flock* locks);
