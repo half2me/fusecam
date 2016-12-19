@@ -3,8 +3,6 @@
 
 
 class SmartBuffer {
-private:
-    unsigned int maxSize;
 public:
     char * buf;
     unsigned int size;
