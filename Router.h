@@ -11,7 +11,7 @@ private:
     static void splitRoute(const char* path, std::vector<std::string> &vec);
     static std::set<std::string> dirs;
     static std::set<std::string> files;
-    static int readToBuf(const std::string& src, char* dst, size_t len, off_t offset);
+    static int readToBuf(const char* src, char* dst, size_t len, off_t offset);
 public:
     static Camera* cam;
     static struct fuse_operations ops;

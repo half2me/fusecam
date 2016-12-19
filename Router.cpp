@@ -222,6 +222,7 @@ int Router::open(const char *path, struct fuse_file_info *fi) {
             if (stream != nullptr) {
                 if (split[3] == "screenshot") {
                     fi->fh = (uInt) new char [stream->screenShotBufferSize];
+                    stream->getScreenShot((char *) fi->fh);
                 }
             }
         }
@@ -252,14 +253,17 @@ int Router::read(const char *path, char *buf, size_t size, off_t offset, struct 
     splitRoute(path, split);
     if (split.size() == 2) {
         if (split[1] == "system_info") {
-            return readToBuf(cam->getSystemInfo(), buf, size, offset);
+            return readToBuf(cam->getSystemInfo().c_str(), buf, size, offset);
         }
     } else if (split.size() > 3) {
         if (split[1] == "streams") {
             auto stream = cam->getStream(split[2]);
+            if (stream != nullptr && fi->fh != nullptr) {
+                readToBuf((char *) fi->fh, buf, size, offset);
+            }
         }
     }
-
+    return -1;
 }
 
 int Router::write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
@@ -272,8 +276,10 @@ int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct fl
     return -1;
 }
 
-int Router::readToBuf(const std::string& src, char *dst, size_t len, off_t offset) {
-    return (int) src.copy(dst, len, (unsigned long) offset);
+int Router::readToBuf(const char* src, char* dst, size_t len, off_t offset) {
+    memcpy(dst, &src[offset], len);
+    return (int) len;
+    // TODO: fix everything :(
 }
 
 
