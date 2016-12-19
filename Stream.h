@@ -4,7 +4,9 @@
 
 class Stream {
 public:
-    int screenShotBufferSize = 4096;
+    Stream();
+    virtual ~Stream();
+    int screenShotBufferSize;
     virtual int getScreenShot(char* buf) = 0;
 };
 

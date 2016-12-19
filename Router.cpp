@@ -6,6 +6,10 @@
 #include "Router.h"
 #include "Camera.h"
 
+#ifdef VENDOR_DUMMY
+#include "vendor/Dummy/DummyCamera.h"
+#endif
+
 fuse_operations Router::ops = {0};
 Camera* Router::cam;
 std::set<std::string> Router::dirs;
@@ -32,6 +36,10 @@ void Router::setup() {
     dirs.insert("io");
 
     files.insert("system_info");
+
+#ifdef VENDOR_DUMMY
+    cam = new DummyCamera();
+#endif
 }
 
 void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
@@ -44,7 +52,6 @@ void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
 
 void* Router::init(struct fuse_conn_info *conn) {
     std::cout << "FuseCam - FUSE version: " << conn->proto_major << "." << conn->proto_major << std::endl;
-    cam = new Camera();
     return nullptr;
 }
 
@@ -253,13 +260,13 @@ int Router::read(const char *path, char *buf, size_t size, off_t offset, struct 
     splitRoute(path, split);
     if (split.size() == 2) {
         if (split[1] == "system_info") {
-            return readToBuf(cam->getSystemInfo().c_str(), buf, size, offset);
+            return readToBuf(cam->getSystemInfo().c_str(), sizeof(cam->getSystemInfo().c_str()), buf, size, offset);
         }
     } else if (split.size() > 3) {
         if (split[1] == "streams") {
             auto stream = cam->getStream(split[2]);
             if (stream != nullptr && fi->fh != nullptr) {
-                readToBuf((char *) fi->fh, buf, size, offset);
+                readToBuf((char *) fi->fh, (size_t) stream->screenShotBufferSize, buf, size, offset);
             }
         }
     }
@@ -276,10 +283,18 @@ int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct fl
     return -1;
 }
 
-int Router::readToBuf(const char* src, char* dst, size_t len, off_t offset) {
+int Router::readToBuf(const char* src, size_t srcSize, char* dst, size_t len, off_t offset) {
+    if (offset >= srcSize) {
+        return 0;
+    }
+
+    if (offset + len > srcSize) {
+        memcpy(dst, src + offset, (srcSize - offset));
+        return (int) (srcSize - offset);
+    }
+
     memcpy(dst, &src[offset], len);
     return (int) len;
-    // TODO: fix everything :(
 }
 
 

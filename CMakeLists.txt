@@ -17,11 +17,10 @@ set(SOURCE_FILES
         Stream.cpp Stream.h
         Io.cpp Io.h)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
-
 add_definitions(-D_FILE_OFFSET_BITS=64 -DFUSE_USE_VERSION=30)
-add_executable(FuseCam ${SOURCE_FILES})
 
 # Target Dummy
+add_definitions(-DVENDOR_DUMMY)
 set(DUMMY_SOURCE_FILES ${SOURCE_FILES}
         vendor/Dummy/DummyCamera.h vendor/Dummy/DummyCamera.cpp
         vendor/Dummy/DummyStream.cpp vendor/Dummy/DummyStream.h
