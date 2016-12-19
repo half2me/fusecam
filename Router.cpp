@@ -228,7 +228,7 @@ int Router::open(const char *path, struct fuse_file_info *fi) {
             auto stream = cam->getStream(split[2]);
             if (stream != nullptr) {
                 if (split[3] == "screenshot") {
-                    fi->fh = (uInt) new char [stream->screenShotBufferSize];
+                    fi->fh = (uintptr_t) new char [stream->screenShotBufferSize];
                     stream->getScreenShot((char *) fi->fh);
                 }
             }
@@ -246,7 +246,7 @@ int Router::release(const char *path, struct fuse_file_info *fi) {
             auto stream = cam->getStream(split[2]);
             if (stream != nullptr) {
                 if (split[3] == "screenshot") {
-                    delete fi->fh;
+                    delete (char*) fi->fh;
                 }
             }
         }
@@ -265,7 +265,7 @@ int Router::read(const char *path, char *buf, size_t size, off_t offset, struct 
     } else if (split.size() > 3) {
         if (split[1] == "streams") {
             auto stream = cam->getStream(split[2]);
-            if (stream != nullptr && fi->fh != nullptr) {
+            if (stream != nullptr && fi->fh != (uintptr_t) nullptr) {
                 readToBuf((char *) fi->fh, (size_t) stream->screenShotBufferSize, buf, size, offset);
             }
         }
@@ -284,7 +284,7 @@ int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct fl
 }
 
 int Router::readToBuf(const char* src, size_t srcSize, char* dst, size_t len, off_t offset) {
-    if (offset >= srcSize) {
+    if ((size_t)offset >= srcSize) {
         return 0;
     }
 
