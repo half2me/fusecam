@@ -23,6 +23,7 @@ void Router::setup() {
     ops.rename = rename;
     ops.truncate = truncate;
     ops.open = open;
+    ops.release = release;
     ops.read = read;
     ops.write = write;
     //ops.lock = lock;
@@ -85,6 +86,15 @@ int Router::getattr(const char *path, struct stat *st) {
                 exists = true;
             }
         }
+    } else if (split.size() > 3) {
+        if (split[1] == "streams") {
+            Stream* stream = cam->getStream(split[2]);
+            if (stream != nullptr) {
+                if (split[3] == "screenshot") {
+                    exists = true;
+                }
+            }
+        }
     }
 
     if (exists) {
@@ -99,6 +109,7 @@ int Router::getattr(const char *path, struct stat *st) {
             // file
             st->st_mode = S_IFREG | 0644;
             st->st_nlink = 1;
+            st->st_size = 4096;
         }
     } else {
         return -1;
@@ -112,27 +123,7 @@ int Router::opendir(const char *path, struct fuse_file_info *fi) {
     std::vector<std::string> split;
     splitRoute(path, split);
 
-    if (strcmp(path, "/") == 0) {
-        return 0;
-    } else if (split.size() == 2) {
-        if (dirs.find(split[1]) != dirs.end()) {
-            return 0;
-        }
-    } else if (split.size() == 3) {
-        if (split[1] == "streams") {
-            Stream* stream = cam->getStream(split[2]);
-            if (stream != nullptr) {
-                return 0;
-            }
-        } else if (split[1] == "io") {
-            Io* io = cam->getIo(split[2]);
-            if (io != nullptr) {
-                return 0;
-            }
-        }
-    }
-
-    return -1;
+    return 0;
 }
 
 int Router::readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
@@ -166,6 +157,7 @@ int Router::readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t o
             Stream* stream = cam->getStream(split[2]);
             if (stream != nullptr) {
                 exists = true;
+                filler(buf, "screenshot", NULL, 0);
             }
         } else if (split[1] == "io") {
             Io* io = cam->getIo(split[2]);
@@ -222,12 +214,52 @@ int Router::truncate(const char *path, off_t size) {
 
 int Router::open(const char *path, struct fuse_file_info *fi) {
     std::cout << "open " << path << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+    if (split.size() > 3) {
+        if (split[1] == "streams") {
+            auto stream = cam->getStream(split[2]);
+            if (stream != nullptr) {
+                if (split[3] == "screenshot") {
+                    fi->fh = (uInt) new char [stream->screenShotBufferSize];
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int Router::release(const char *path, struct fuse_file_info *fi) {
+    std::cout << "open " << path << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+    if (split.size() > 3) {
+        if (split[1] == "streams") {
+            auto stream = cam->getStream(split[2]);
+            if (stream != nullptr) {
+                if (split[3] == "screenshot") {
+                    delete fi->fh;
+                }
+            }
+        }
+    }
     return 0;
 }
 
 int Router::read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
-    std::cout << "read " << path << std::endl;
-    return -1;
+    std::cout << "read " << path << " Size: " << size << " Offset: " << offset << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+    if (split.size() == 2) {
+        if (split[1] == "system_info") {
+            return readToBuf(cam->getSystemInfo(), buf, size, offset);
+        }
+    } else if (split.size() > 3) {
+        if (split[1] == "streams") {
+            auto stream = cam->getStream(split[2]);
+        }
+    }
+
 }
 
 int Router::write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
@@ -238,6 +270,10 @@ int Router::write(const char *path, const char *buf, size_t size, off_t offset, 
 int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct flock *locks) {
     std::cout << "lock " << path << std::endl;
     return -1;
+}
+
+int Router::readToBuf(const std::string& src, char *dst, size_t len, off_t offset) {
+    return (int) src.copy(dst, len, (unsigned long) offset);
 }
 
 

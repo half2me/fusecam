@@ -8,6 +8,8 @@
 #include "Io.h"
 
 class Camera {
+private:
+    std::string systemInfo;
 public:
     std::map<std::string, Stream*> streams;
     std::map<std::string, Io*> io;
@@ -18,6 +20,7 @@ public:
     Io* getIo(const std::string& name);
     void setIo(const std::string& name, Io& io);
     void removeIo(const std::string &name);
+    virtual const std::string& getSystemInfo() const;
     virtual ~Camera();
 };
 

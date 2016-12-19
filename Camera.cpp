@@ -49,3 +49,7 @@ void Camera::removeIo(const std::string &name) {
         io.erase(name);
     }
 }
+
+const std::string& Camera::getSystemInfo() const {
+    return systemInfo;
+}
