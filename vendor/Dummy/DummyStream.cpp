@@ -9,7 +9,7 @@ DummyStream::~DummyStream() {
 
 }
 
-int DummyStream::getScreenShot(char *buf) {
+unsigned int DummyStream::getScreenShot(char *buf) {
     const char* s = "Hello World";
     strcpy(buf, s);
     return sizeof(s);

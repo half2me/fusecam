@@ -6,8 +6,8 @@ class Stream {
 public:
     Stream();
     virtual ~Stream();
-    int screenShotBufferSize;
-    virtual int getScreenShot(char* buf) = 0;
+    unsigned int screenShotBufferSize;
+    virtual unsigned int getScreenShot(char* buf) = 0;
 };
 
 

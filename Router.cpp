@@ -230,8 +230,9 @@ int Router::open(const char *path, struct fuse_file_info *fi) {
             auto stream = cam->getStream(split[2]);
             if (stream != nullptr) {
                 if (split[3] == "screenshot") {
-                    fi->fh = (uintptr_t) new SmartBuffer(stream->screenShotBufferSize);
-                    stream->getScreenShot(((SmartBuffer*)(fi->fh))->buf);
+                    auto sb = new SmartBuffer(stream->screenShotBufferSize);
+                    sb->size = stream->getScreenShot(sb->buf);
+                    fi->fh = (uintptr_t) sb;
                 }
             }
         }

@@ -4,10 +4,10 @@
 
 class SmartBuffer {
 private:
-    unsigned int size;
     unsigned int maxSize;
 public:
     char * buf;
+    unsigned int size;
     SmartBuffer(int maxSize);
     ~SmartBuffer();
     int read(const unsigned int offset, const unsigned int amount, char* dst);

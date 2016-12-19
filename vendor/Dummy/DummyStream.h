@@ -8,7 +8,7 @@ class DummyStream : public Stream {
 public:
     DummyStream();
     ~DummyStream();
-    virtual int getScreenShot(char* buf);
+    virtual unsigned int getScreenShot(char* buf);
 };
 
 
