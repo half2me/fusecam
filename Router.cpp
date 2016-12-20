@@ -76,11 +76,11 @@ int Router::getattr(const char *path, struct stat *st) {
     }
 
     if (split.size() == 2) {
-        Io *io = cam->getIo(split[2]);
+        Io *io = cam->getIo(split[1]);
         if (io != nullptr) {
             st->st_mode = S_IFREG | 0666;
             st->st_nlink = 1;
-            st->st_size = 1;
+            st->st_size = 4;
             return 0;
         }
     }
@@ -158,15 +158,21 @@ int Router::release(const char *path, struct fuse_file_info *fi) {
 int Router::read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
     std::cout << "read " << path << " Size: " << size << " Offset: " << offset << std::endl;
     std::vector<std::string> split;
+    splitRoute(path, split);
 
     if (offset != 0) {
         return 0;
     }
 
+
     if (split.size() == 2) {
         auto io = cam->getIo(split[1]);
         if (io != nullptr) {
             buf[0] = io->getLevel() ? '1' : '0';
+            if (size > 1) {
+                buf[1] = '\n';
+                return 2;
+            }
             return 1;
         }
     }
@@ -181,5 +187,5 @@ int Router::write(const char *path, const char *buf, size_t size, off_t offset, 
 
 int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct flock *locks) {
     std::cout << "lock " << path << std::endl;
-    return -1;
+    return 0;
 }
