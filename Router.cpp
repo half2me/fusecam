@@ -164,7 +164,6 @@ int Router::read(const char *path, char *buf, size_t size, off_t offset, struct 
         return 0;
     }
 
-
     if (split.size() == 2) {
         auto io = cam->getIo(split[1]);
         if (io != nullptr) {
@@ -182,6 +181,23 @@ int Router::read(const char *path, char *buf, size_t size, off_t offset, struct 
 
 int Router::write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
     std::cout << "write " << path << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+
+    if (offset != 0) {
+        return 0;
+    }
+
+    if (split.size() == 2) {
+        auto io = cam->getIo(split[1]);
+        if (io != nullptr) {
+            if (size <= 2) {
+                io->setLevel(buf[0] != 0);
+                return (int) size;
+            }
+        }
+    }
+
     return -1;
 }
 
