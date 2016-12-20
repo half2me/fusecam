@@ -1,5 +1,6 @@
 #include "DummyCamera.h"
+#include "DummyIo.h"
 
 DummyCamera::DummyCamera() {
-    setStream("static", new DummyStream());
+    setIo("static", new DummyIo(true));
 }

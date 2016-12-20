@@ -3,7 +3,14 @@
 
 
 class Io {
-
+private:
+    bool level;
+public:
+    bool soft;
+    Io(bool soft);
+    virtual ~Io();
+    virtual bool getLevel();
+    virtual void setLevel(bool level);
 };
 
 

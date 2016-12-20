@@ -5,7 +5,10 @@
 #include "../../Io.h"
 
 class DummyIo : public Io {
+public:
+    DummyIo();
 
+    DummyIo(bool soft);
 };
 
 
