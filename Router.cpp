@@ -192,7 +192,7 @@ int Router::write(const char *path, const char *buf, size_t size, off_t offset, 
         auto io = cam->getIo(split[1]);
         if (io != nullptr) {
             if (size <= 2) {
-                io->setLevel(buf[0] != 0);
+                io->setLevel(buf[0] != '0');
                 return (int) size;
             }
         }
