@@ -4,7 +4,7 @@ Io::~Io() {
 
 }
 
-Io::Io(bool soft = true): soft(soft) {
+Io::Io(bool soft, bool level): soft(soft), level(level) {
 
 }
 

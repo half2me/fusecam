@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <string>
 #include <zconf.h>
 #include <sstream>
 #include <set>
@@ -34,6 +35,7 @@ void Router::setup() {
     ops.read = read;
     ops.write = write;
     ops.lock = lock;
+    ops.mknod = mknod;
 
 #ifdef VENDOR_DUMMY
     cam = new DummyCamera();
@@ -85,12 +87,25 @@ int Router::getattr(const char *path, struct stat *st) {
         }
     }
 
-    return -1;
+    return -ENOENT;
 }
 
 int Router::opendir(const char *path, struct fuse_file_info *fi) {
     std::cout << "opendir " << path << std::endl;
-    return 0;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+
+    if (strcmp(path, "/") == 0) {
+        return 0;
+    }
+
+    if (split.size() == 2) {
+        if (cam->getIo(split[1]) != nullptr) {
+            return -ENOTDIR;
+        }
+    }
+
+    return -ENOENT;
 }
 
 int Router::readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
@@ -129,7 +144,11 @@ int Router::unlink(const char *path) {
             if (io->soft) {
                 cam->removeIo(split[1]);
                 return 0;
+            } else {
+                return -EPERM;
             }
+        } else {
+            return -ENOENT;
         }
     }
     return -1;
@@ -151,7 +170,7 @@ int Router::open(const char *path, struct fuse_file_info *fi) {
 }
 
 int Router::release(const char *path, struct fuse_file_info *fi) {
-    std::cout << "open " << path << std::endl;
+    std::cout << "release " << path << std::endl;
     return 0;
 }
 
@@ -173,6 +192,8 @@ int Router::read(const char *path, char *buf, size_t size, off_t offset, struct 
                 return 2;
             }
             return 1;
+        } else {
+            return -ENOENT;
         }
     }
 
@@ -204,4 +225,26 @@ int Router::write(const char *path, const char *buf, size_t size, off_t offset, 
 int Router::lock(const char *path, struct fuse_file_info *fi, int cmd, struct flock *locks) {
     std::cout << "lock " << path << std::endl;
     return 0;
+}
+
+int Router::mknod(const char *path, mode_t mode, dev_t dev) {
+    std::cout << "mknod " << path << std::endl;
+    std::vector<std::string> split;
+    splitRoute(path, split);
+
+    if (!(mode & S_IFREG)) {
+        // only allow regular files
+        return -1;
+    }
+
+    if (split.size() == 2) {
+        if (cam->getIo(split[1]) == nullptr) {
+            cam->setIo(split[1], new Io());
+            return 0;
+        } else {
+            return -EEXIST;
+        }
+    }
+
+    return -1;
 }
