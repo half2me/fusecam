@@ -6,7 +6,7 @@
 
 class DummyIo : public Io {
 public:
-    DummyIo(bool i, bool i1);
+    DummyIo(bool soft = true, bool level = false);
 };
 
 
