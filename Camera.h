@@ -7,7 +7,7 @@
 #include "Io.h"
 
 class Camera {
-private:
+protected:
     std::string systemInfo;
 public:
     std::map<std::string, Io*> io;
