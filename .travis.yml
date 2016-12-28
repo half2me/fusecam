@@ -34,13 +34,6 @@ before_script:
 
 script:
   - make
-  - valgrind --leak-check=yes ./Dummy ../fusecam
-  - cd ../fusecam
-  - echo 1 > trigger1
-  - cat trigger 1
-  - rm trigger 1
-  - cd ..
-  - fusermount -z -u fusecam
 
 notifications:
   email: false
