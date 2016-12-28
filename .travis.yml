@@ -18,14 +18,12 @@ matrix:
             - llvm-3.8
             - libfuse-dev
             - libfuse2
-            - valgrind
     - os: osx
       osx_image: xcode8.2
       compiler: clang
       before_install:
         - brew update
         - brew cask install osxfuse
-        - brew install valgrind
 
 before_script:
   - mkdir fusecam
