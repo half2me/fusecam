@@ -179,19 +179,24 @@ int Router::read(const char *path, char *buf, size_t size, off_t offset, struct 
     std::vector<std::string> split;
     splitRoute(path, split);
 
-    if (offset != 0) {
-        return 0;
+    if (offset > 0) {
+        return 0; // Seeking is not supported
     }
 
     if (split.size() == 2) {
         auto io = cam->getIo(split[1]);
         if (io != nullptr) {
-            buf[0] = io->getLevel() ? '1' : '0';
-            if (size > 1) {
-                buf[1] = '\n';
-                return 2;
+            switch (size) {
+                case 0:
+                    return 0;
+                case 1:
+                    buf[0] = io->getLevel() ? '1' : '0';
+                    return 1;
+                default:
+                    buf[0] = io->getLevel() ? '1' : '0';
+                    buf[1] = '\n';
+                    return 2;
             }
-            return 1;
         } else {
             return -ENOENT;
         }

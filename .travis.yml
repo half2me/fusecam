@@ -18,19 +18,24 @@ matrix:
             - llvm-3.8
             - libfuse-dev
             - libfuse2
+            - valgrind
     - os: osx
       osx_image: xcode8.2
       compiler: clang
       before_install:
         - brew update
         - brew cask install osxfuse
+        - brew install valgrind
 
 before_script:
-  - mkdir build
-  - cd build
-  - cmake ..
+  - mkdir fusecam
+  - mkdir build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug ..
 
-script: make
+script:
+  - make
+  - valgrind --leak-check=yes ./Dummy ../fusecam -f
+  - sleep 5
 
 notifications:
   email: false
