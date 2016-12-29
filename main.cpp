@@ -15,9 +15,9 @@ int main(int argc, char* argv[]) {
     base.append("/fusecam");
     string io_mount = base;
     io_mount.append("/io");
+    string stream_mount = base;
+    stream_mount.append("/stream");
     bool debug = true;
-
-    // Parse command-line options
 
     // Make dirs
     struct stat st = {0};
@@ -26,6 +26,9 @@ int main(int argc, char* argv[]) {
     }
     if (stat(io_mount.c_str(), &st) == -1) {
         mkdir(io_mount.c_str(), 0774);
+    }
+    if (stat(stream_mount.c_str(), &st) == -1) {
+        mkdir(stream_mount.c_str(), 0774);
     }
 
     // build FUSE settings
