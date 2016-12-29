@@ -5,7 +5,8 @@
 #include "../../Io.h"
 
 class DummyIo : public Io {
-
+public:
+    DummyIo(bool soft = true, bool level = false);
 };
 
 

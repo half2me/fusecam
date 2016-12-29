@@ -30,6 +30,7 @@ public:
     static int read(const char* path, char *buf, size_t size, off_t offset, struct fuse_file_info* fi);
     static int write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
     static int lock(const char* path, struct fuse_file_info* fi, int cmd, struct flock* locks);
+    static int mknod(const char *path, mode_t mode, dev_t dev);
 };
 
 

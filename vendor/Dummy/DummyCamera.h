@@ -3,7 +3,6 @@
 
 #include <string>
 #include "../../Camera.h"
-#include "DummyStream.h"
 
 class DummyCamera : public Camera {
 public:

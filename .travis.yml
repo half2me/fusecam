@@ -26,11 +26,12 @@ matrix:
         - brew cask install osxfuse
 
 before_script:
-  - mkdir build
-  - cd build
-  - cmake ..
+  - mkdir fusecam
+  - mkdir build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug ..
 
-script: make
+script:
+  - make
 
 notifications:
   email: false

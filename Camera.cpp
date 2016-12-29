@@ -5,31 +5,9 @@ Camera::Camera() {
 }
 
 Camera::~Camera() {
-    // Cleanup Streams
-    for (auto& s: streams) {
-        delete s.second;
-    }
-
     // Cleanup Io
     for (auto& i: io) {
         delete i.second;
-    }
-}
-
-Stream* Camera::getStream(const std::string &name) {
-    return streams[name];
-}
-
-void Camera::setStream(const std::string &name, Stream* stream) {
-    removeStream(name); // make sure we remove any with the same name
-    streams[name] = stream;
-}
-
-void Camera::removeStream(const std::string &name) {
-    Stream* s = getStream(name);
-    if (s != nullptr) {
-        delete s;
-        streams.erase(name);
     }
 }
 
