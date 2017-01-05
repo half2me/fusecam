@@ -11,7 +11,7 @@ private:
     const std::string deviceName;
     int fd = -1;
     int xioctl(int fh, unsigned long request, void* arg);
-    unsigned int h, w;
+    size_t bufferSize;
 
     struct v4l2_capability cap = {0};
     struct v4l2_cropcap cropcap = {0};
@@ -23,7 +23,7 @@ private:
 public:
     Video4LinuxStream(const std::string& dev);
     ~Video4LinuxStream();
-    Frame& getNextFrame();
+    Frame* getNextFrame();
 };
 
 

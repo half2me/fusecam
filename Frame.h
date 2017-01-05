@@ -6,7 +6,9 @@
 class Frame {
 public:
     std::string type;
-    Frame();
+    Frame(size_t size);
+    size_t size;
+    void* buf;
     virtual ~Frame();
 };
 

@@ -1,5 +1,7 @@
 #include <fcntl.h>
+#include <zconf.h>
 #include "Video4LinuxStream.h"
+#include "../../Frame.h"
 
 Video4LinuxStream::Video4LinuxStream(const std::string &dev) {
     openDevice();
@@ -18,7 +20,19 @@ int Video4LinuxStream::xioctl(int fh, unsigned long request, void *arg) {
     return r;
 }
 
-Frame &Video4LinuxStream::getNextFrame() {
+Frame *Video4LinuxStream::getNextFrame() {
+    auto f = new Frame(bufferSize);
+    if (-1 == read(fd, f->buf, f->size)) {
+        switch (errno) {
+            case EAGAIN:
+                throw "Try again!";
+            case EIO:
+                throw "EIO error";
+            default:
+                throw "Read error";
+        }
+    }
+    return f;
 }
 
 void Video4LinuxStream::openDevice() {
@@ -69,5 +83,7 @@ void Video4LinuxStream::initDevice() {
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
         throw "VIDIOC_G_FMT";
+
+    bufferSize = fmt.fmt.pix.sizeimage;
 
 }
