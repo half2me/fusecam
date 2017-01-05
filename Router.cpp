@@ -8,16 +8,11 @@
 #include "Camera.h"
 
 #ifdef VENDOR_DUMMY
-
-#include "vendor/Dummy/DummyCamera.h"
-#include "SmartBuffer.h"
-
+    #include "vendor/Dummy/DummyCamera.h"
 #endif
 
 fuse_operations Router::ops = {0};
 Camera *Router::cam;
-std::set<std::string> Router::dirs;
-std::set<std::string> Router::files;
 
 void Router::setup() {
     ops.init = init;
@@ -36,10 +31,6 @@ void Router::setup() {
     ops.write = write;
     ops.lock = lock;
     ops.mknod = mknod;
-
-#ifdef VENDOR_DUMMY
-    cam = new DummyCamera();
-#endif
 }
 
 void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
@@ -52,6 +43,9 @@ void Router::splitRoute(const char *path, std::vector<std::string> &vec) {
 
 void *Router::init(struct fuse_conn_info *conn) {
     std::cout << "FuseCam - FUSE version: " << conn->proto_major << "." << conn->proto_major << std::endl;
+#ifdef VENDOR_DUMMY
+    cam = new DummyCamera();
+#endif
     return nullptr;
 }
 

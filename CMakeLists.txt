@@ -15,7 +15,6 @@ set(SOURCE_FILES
         Router.cpp Router.h
         Camera.cpp Camera.h
         Io.cpp Io.h
-        SmartBuffer.cpp SmartBuffer.h
         Stream.cpp Stream.h
         Filter.cpp Filter.h
         Frame.cpp Frame.h)

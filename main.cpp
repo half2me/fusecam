@@ -7,8 +7,8 @@
 
 using namespace std;
 
-
 int main(int argc, char* argv[]) {
+
     // Default params
     string argv_str(argv[0]);
     string base = argv_str.substr(0, argv_str.find_last_of("/"));
