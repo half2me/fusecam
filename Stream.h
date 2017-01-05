@@ -8,13 +8,14 @@ class Stream {
 protected:
     virtual void processFrame(Frame& frame);
 public:
+    size_t frameBufferSize;
     std::map<std::string, Filter*> filters;
     Stream();
     virtual ~Stream();
     virtual Filter* getFilter(const std::string& name);
     virtual void setFilter(const std::string& name, Filter* filter);
     virtual void removeFilter(const std::string &name);
-    virtual Frame& getNextFrame() = 0;
+    virtual void getNextFrame(Frame* buf) = 0;
 };
 
 

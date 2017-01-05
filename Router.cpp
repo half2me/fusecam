@@ -46,11 +46,14 @@ void *Router::init(struct fuse_conn_info *conn) {
 #ifdef VENDOR_DUMMY
     cam = new DummyCamera();
 #endif
+
+    cam->start();
     return nullptr;
 }
 
 void Router::destroy(void *private_data) {
     std::cout << "FuseCam shutting down...";
+    cam->stop();
     delete cam;
 }
 

@@ -38,8 +38,10 @@ int main(int argc, char* argv[]) {
         fuse_settings.push_back("-f");
     }
 
-    // FUSE
+
     Router::setup();
+
+    // FUSE
     int fuse_argc = (int) fuse_settings.size() + 1;
     char* fuse_argv[fuse_argc];
     fuse_argv[0] = argv[0];

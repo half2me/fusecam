@@ -8,7 +8,7 @@ public:
     std::string type;
     Frame(size_t size);
     size_t size;
-    void* buf;
+    char* buf;
     virtual ~Frame();
 };
 

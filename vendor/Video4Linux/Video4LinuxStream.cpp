@@ -9,7 +9,7 @@ Video4LinuxStream::Video4LinuxStream(const std::string &dev) {
 }
 
 Video4LinuxStream::~Video4LinuxStream() {
-
+    close(fd);
 }
 
 int Video4LinuxStream::xioctl(int fh, unsigned long request, void *arg) {
@@ -20,9 +20,8 @@ int Video4LinuxStream::xioctl(int fh, unsigned long request, void *arg) {
     return r;
 }
 
-Frame *Video4LinuxStream::getNextFrame() {
-    auto f = new Frame(bufferSize);
-    if (-1 == read(fd, f->buf, f->size)) {
+void Video4LinuxStream::getNextFrame(Frame* buf) {
+    if (-1 == read(fd, buf->buf, buf->size)) {
         switch (errno) {
             case EAGAIN:
                 throw "Try again!";
@@ -32,7 +31,6 @@ Frame *Video4LinuxStream::getNextFrame() {
                 throw "Read error";
         }
     }
-    return f;
 }
 
 void Video4LinuxStream::openDevice() {
@@ -84,6 +82,6 @@ void Video4LinuxStream::initDevice() {
     if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
         throw "VIDIOC_G_FMT";
 
-    bufferSize = fmt.fmt.pix.sizeimage;
+    frameBufferSize = fmt.fmt.pix.sizeimage;
 
 }

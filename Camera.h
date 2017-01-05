@@ -10,9 +10,11 @@
 class Camera {
 protected:
     std::string systemInfo;
+    bool running = false;
 public:
     std::map<std::string, Io*> io;
     std::map<std::string, Stream*> streams;
+    std::map<std::string, Frame*> frameBuffers;
     Camera();
     virtual Io* getIo(const std::string& name);
     virtual void setIo(const std::string& name, Io* io);
@@ -21,6 +23,8 @@ public:
     virtual void setStream(const std::string& name, Stream* stream);
     virtual void removeStream(const std::string &name);
     virtual const std::string& getSystemInfo() const;
+    virtual void start();
+    virtual void stop();
     virtual ~Camera();
 };
 
