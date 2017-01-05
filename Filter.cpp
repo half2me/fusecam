@@ -7,3 +7,7 @@ Filter::Filter() {
 Filter::~Filter() {
 
 }
+
+void Filter::processFrame(Frame &frame) {
+
+}

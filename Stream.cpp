@@ -24,3 +24,9 @@ void Stream::removeFilter(const std::string &name) {
         filters.erase(name);
     }
 }
+
+void Stream::processFrame(Frame &frame) {
+    for (auto& f : filters) {
+        f.second->processFrame(frame);
+    }
+}

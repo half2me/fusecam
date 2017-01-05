@@ -1,5 +1,6 @@
 #include "DummyCamera.h"
 #include "DummyIo.h"
+#include "../Video4Linux/Video4LinuxStream.h"
 #include <string>
 
 DummyCamera::DummyCamera() : Camera() {
@@ -8,4 +9,6 @@ DummyCamera::DummyCamera() : Camera() {
     setIo("hwi1", new DummyIo(false, false));
     setIo("hwo0", new DummyIo(false, false));
     setIo("hwo1", new DummyIo(false, false));
+
+    setStream("v4l-yuv", new Video4LinuxStream("/dev/video0"));
 }

@@ -5,13 +5,16 @@
 #include "Filter.h"
 
 class Stream {
+protected:
+    virtual void processFrame(Frame& frame);
 public:
     std::map<std::string, Filter*> filters;
     Stream();
     virtual ~Stream();
-    Filter* getFilter(const std::string& name);
-    void setFilter(const std::string& name, Filter* filter);
-    void removeFilter(const std::string &name);
+    virtual Filter* getFilter(const std::string& name);
+    virtual void setFilter(const std::string& name, Filter* filter);
+    virtual void removeFilter(const std::string &name);
+    virtual Frame& getNextFrame() = 0;
 };
 
 
