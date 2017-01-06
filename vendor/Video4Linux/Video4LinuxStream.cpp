@@ -4,6 +4,7 @@
 #include "../../Frame.h"
 
 Video4LinuxStream::Video4LinuxStream(const std::string &dev) {
+    deviceName = dev;
     openDevice();
     initDevice();
 }
@@ -54,8 +55,26 @@ void Video4LinuxStream::initDevice() {
         throw "Not a video capture device";
     }
 
-    if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
-        throw "read i/o not supported";
+    if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
+        throw "streaming i/o not supported";
+    }
+
+    // MMAP Init
+    struct v4l2_requestbuffers req = {0};
+    req.count = 4;
+    req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    req.memory = V4L2_MEMORY_MMAP;
+
+    if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req)) {
+        if (EINVAL == errno) {
+            throw "Memory mapping not supported";
+        } else {
+            throw "VIDIOC_REQBUFS";
+        }
+    }
+
+    if (req.count < 2) {
+        throw "Insufficient buffer memory on device";
     }
 
     cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;

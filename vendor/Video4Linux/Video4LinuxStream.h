@@ -8,7 +8,7 @@
 
 class Video4LinuxStream : public Stream {
 private:
-    const std::string deviceName;
+    std::string deviceName;
     int fd = -1;
     int xioctl(int fh, unsigned long request, void* arg);
 
