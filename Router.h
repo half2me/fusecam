@@ -9,8 +9,6 @@
 class Router {
 private:
     static void splitRoute(const char* path, std::vector<std::string> &vec);
-    static std::set<std::string> dirs;
-    static std::set<std::string> files;
 public:
     static Camera* cam;
     static struct fuse_operations ops;
